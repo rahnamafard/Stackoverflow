@@ -10,6 +10,12 @@ namespace MVCProj.Controllers
 {
     public class HomeController : Controller
     {
+        StackContext db;
+        public HomeController(StackContext db)
+        {
+            this.db = db;
+        }
+
         public IActionResult Index()
         {
             return View();
