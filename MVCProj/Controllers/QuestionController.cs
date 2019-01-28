@@ -36,7 +36,7 @@ namespace MVCProj.Controllers
         [HttpPost]
         public IActionResult Create(Question question)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 question.UserId = UserManager.GetUserId(User);
                 db.Questions.Add(question);
@@ -52,9 +52,29 @@ namespace MVCProj.Controllers
         [HttpGet]
         public IActionResult Show(int id)
         {
+            QuestionPageModel qpm = new QuestionPageModel();
+
             Question question = db.Questions.Find(id);
-            return View(question);
+            qpm.Question = question;
+            qpm.Questioner = db.Users.Find(question.UserId).UserName;
+
+            qpm.Answers = db.Answers.Where(a => a.QuestionId == question.QuestionId).ToList();
+
+            return View(qpm);
         }
 
+
+        [HttpPost]
+        public IActionResult Answer(QuestionPageModel qpm)
+        {
+            if (ModelState.IsValid)
+            {
+                qpm.newAnswer.UserId = UserManager.GetUserId(User);
+                db.Answers.Add(qpm.newAnswer);
+                db.SaveChanges();
+            }
+
+            return RedirectToAction(nameof(Show), new { id = qpm.newAnswer.QuestionId });
+        }
     }
 }

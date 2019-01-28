@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MVCProj.Models
@@ -8,8 +9,11 @@ namespace MVCProj.Models
         public int QuestionId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
+        public int Vote { get; set; }
 
-  //      [Required]
+        [InverseProperty("Question")]
+        public List<Answer> Answers { get; set; }
+
         public string UserId { get; set; }
 
         [ForeignKey("UserId")]

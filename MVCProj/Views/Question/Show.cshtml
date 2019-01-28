@@ -1,25 +1,76 @@
-﻿@model Question
+﻿@model QuestionPageModel
+@inject StackContext db
 
 @{
     ViewData["Title"] = "Show";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>@Html.DisplayFor(model => model.Title)</h1>
+<h1>@Html.DisplayFor(model => model.Question.Title)</h1>
 
 <div>
     <h4>Question</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            Question
+        <dt class="col-sm-2">
+            @Html.DisplayFor(model => model.Questioner)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Content)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Question.Content)
         </dd>
     </dl>
 </div>
+
 <div>
     @*<a asp-action="Edit" asp-route-id="@Model.QuestionId">Edit</a> |*@
     <a asp-action="Index">Back to List</a>
 </div>
+<br />
+
+<div>
+    @if (Model.Answers != null && Model.Answers.Count != 0)
+    {
+        <h4>Answers</h4>
+        <hr />
+        @foreach (var item in Model.Answers)
+        {
+            <dl class="row">
+                <dt class="col-sm-2">
+                    @db.Users.Find(item.UserId).UserName
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(modelItem => item.Content)
+                </dd>
+            </dl>
+        }
+    }
+</div>
+
+<div>
+    <h4>Your answer</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-md-8">
+            <form method="post" asp-action="Answer">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <textarea asp-for="@Model.newAnswer.Content" class="form-control"></textarea>
+                    <span asp-validation-for="@Model.newAnswer.Content" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="hidden" asp-for="@Model.newAnswer.QuestionId" value="@Model.Question.QuestionId" />
+                    <span asp-validation-for="@Model.newAnswer.QuestionId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Answer" class="btn btn-primary" />
+                </div>
+            </form>
+        </dt>
+    </dl>
+</div>
+
+<div>
+    @*<a asp-action="Edit" asp-route-id="@Model.QuestionId">Edit</a> |*@
+    <a asp-action="Index">Back to List</a>
+</div>
+

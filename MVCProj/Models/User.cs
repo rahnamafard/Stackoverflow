@@ -10,7 +10,12 @@ namespace MVCProj.Models
 {
     public class User : IdentityUser
     {
+        public int Score { get; set; }
+
         [InverseProperty("User")]
         public List<Question> Questions { get; set; }
+
+        [InverseProperty("User")]
+        public List<Answer> Answers { get; set; }
     }
 }
