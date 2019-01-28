@@ -14,6 +14,12 @@ namespace MVCProj.Models
         [InverseProperty("Question")]
         public List<Answer> Answers { get; set; }
 
+        [InverseProperty("Question")]
+        public List<QuestionLike> Likes { get; set; }
+
+        [InverseProperty("Question")]
+        public List<QuestionDislike> Dislikes { get; set; }
+
         public string UserId { get; set; }
 
         [ForeignKey("UserId")]

@@ -4,14 +4,16 @@ using MVCProj.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MVCProj.Migrations
 {
     [DbContext(typeof(StackContext))]
-    partial class StackContextModelSnapshot : ModelSnapshot
+    [Migration("13971108172300_Vote")]
+    partial class Vote
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

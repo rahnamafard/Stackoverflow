@@ -1,9 +1,12 @@
 ﻿@model QuestionPageModel
 @inject StackContext db
 
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<User> UserManager
+
 @{
     ViewData["Title"] = "Show";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+ Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>@Html.DisplayFor(model => model.Question.Title)</h1>
@@ -15,9 +18,33 @@
         <dt class="col-sm-2">
             @Html.DisplayFor(model => model.Questioner)
         </dt>
-        <dd class="col-sm-10">
+
+        <dd class="col-sm-8">
             @Html.DisplayFor(model => model.Question.Content)
         </dd>
+
+        @if (UserManager.GetUserId(User) != Model.Question.UserId)
+        {
+            var x = new QuestionLike()
+            {
+                UserId = UserManager.GetUserId(User),
+                QuestionId = Model.Question.QuestionId
+            };
+
+
+            <dt class="col-sm-2">
+                <form method="post" asp-action="upVoteQuestion" asp-controller="Question" class="d-inline">
+                    <input type="hidden" name="UserId" value="@x.UserId" />
+                    <input type="hidden" name="QuestionId" value="@x.QuestionId" />
+                    <input type="submit" value="@ViewData["upVoteValue"]" class="btn @ViewData["upVoteClass"]" />
+                </form>
+                <form method="post" asp-action="downVoteQuestion" asp-controller="Question" class="d-inline">
+                    <input type="hidden" name="UserId" value="@x.UserId" />
+                    <input type="hidden" name="QuestionId" value="@x.QuestionId" />
+                    <input type="submit" value="@ViewData["downVoteValue"]" class="btn @ViewData["downVoteClass"]" />
+                </form>
+            </dt>
+        }
     </dl>
 </div>
 
@@ -34,14 +61,59 @@
         <hr />
         @foreach (var item in Model.Answers)
         {
-            <dl class="row">
+
+            var x = new AnswerLike()
+            {
+                UserId = UserManager.GetUserId(User),
+                AnswerId = item.Id
+            };
+
+            string upVoteValue = "Like";
+            string upVoteClass = "btn-outline-success";
+            int numOfLikes = db.AnswerLikes.Where(l => l.UserId == UserManager.GetUserId(User)).Count();
+            if (numOfLikes > 0)
+            {
+                upVoteValue = "Liked";
+                upVoteClass = "btn-success";
+            }
+
+            string downVoteValue = "Dislike";
+            string downVoteClass = "btn-outline-danger";
+            int numOfDislikes = db.AnswerDislikes.Where(l => l.UserId == UserManager.GetUserId(User)).Count();
+            if (numOfDislikes > 0)
+            {
+                downVoteValue = "Disliked";
+                downVoteClass = "btn-danger";
+            }
+
+
+        <dl class="row">
+            <dt class="col-sm-2">
+                @db.Users.Find(item.UserId).UserName
+            </dt>
+            <dd class="col-sm-8">
+                @Html.DisplayFor(modelItem => item.Content)
+            </dd>
+
+            @if (UserManager.GetUserId(User) != item.UserId)
+            {
+                
                 <dt class="col-sm-2">
-                    @db.Users.Find(item.UserId).UserName
+                    <form method="post" asp-action="upVoteAnswer" asp-controller="Question" class="d-inline">
+                        <input type="hidden" name="UserId" value="@x.UserId" />
+                        <input type="hidden" name="AnswerId" value="@x.AnswerId" />
+                        <input type="submit" value="@upVoteValue" class="btn @upVoteClass" />
+                    </form>
+                    <form method="post" asp-action="downVoteAnswer" asp-controller="Question" class="d-inline">
+                        <input type="hidden" name="UserId" value="@x.UserId" />
+                        <input type="hidden" name="AnswerId" value="@x.AnswerId" />
+                        <input type="submit" value="@downVoteValue" class="btn @downVoteClass" />
+                    </form>
                 </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(modelItem => item.Content)
-                </dd>
-            </dl>
+
+            }
+
+        </dl>
         }
     }
 </div>
