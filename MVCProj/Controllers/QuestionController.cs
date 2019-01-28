@@ -52,6 +52,11 @@ namespace MVCProj.Controllers
         [HttpGet]
         public IActionResult Show(int id)
         {
+            if(!User.Identity.IsAuthenticated)
+            {
+                return View("LoginToContinue");
+            }
+
             QuestionPageModel qpm = new QuestionPageModel();
 
             Question question = db.Questions.Find(id);
