@@ -58,11 +58,6 @@ namespace MVCProj.Controllers
             return View();
         }
 
-        //public IActionResult Login()
-        //{
-        //    return View();
-        //}
-
         [HttpGet]
         public IActionResult Login(string returnUrl = "")
         {
@@ -93,12 +88,67 @@ namespace MVCProj.Controllers
             ModelState.AddModelError("", "Invalid login attempt");
             return View(model);
         }
-
-        //[HttpPost]
+        
         public async Task<IActionResult> Logout()
         {
             await _signManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+
+        [HttpGet]
+        public IActionResult Profile(string id)
+        {
+            if(string.IsNullOrEmpty(id) || string.IsNullOrWhiteSpace(id))
+            {
+                if (User.Identity.IsAuthenticated)
+                {
+                    User myUser = db.Users.Find(_userManager.GetUserId(User));
+
+                    if (myUser != null)
+                    {
+                        UserProfileViewModel upvm = new UserProfileViewModel()
+                        {
+                            Username = myUser.UserName,
+                            Score = myUser.Score,
+                            Questions = db.Questions.Where(q => q.UserId == myUser.Id).ToList(),
+                            Answers = db.Answers.Where(a => a.UserId == myUser.Id).ToList()
+                        };
+                        return View(upvm);
+                    }
+                }
+                return View("LoginToContinue");
+            }
+
+            User user = db.Users.Find(id);
+
+            if(user != null)
+            {
+                UserProfileViewModel upvm = new UserProfileViewModel()
+                {
+                    Username = user.UserName,
+                    Score = user.Score,
+                    Questions = db.Questions.Where(q => q.UserId == user.Id).ToList(),
+                    Answers = db.Answers.Where(a => a.UserId == user.Id).ToList()
+                };
+                return View(upvm);
+            }
+
+            return View("LoginToContinue");
+
+        }
+
+        public IActionResult All()
+        {
+            if(User.Identity.IsAuthenticated)
+            {
+                var UserList = db.Users.ToList();
+                return View(UserList);
+            }
+            else
+            {
+                return View("LoginToContinue");
+            }
         }
     }
 }

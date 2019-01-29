@@ -52,32 +52,37 @@ namespace MVCProj.Controllers
         [HttpGet]
         public IActionResult Show(int id)
         {
+            if(!User.Identity.IsAuthenticated)
+            {
+                return View("LoginToContinue");
+            }
+
             QuestionPageModel qpm = new QuestionPageModel();
 
             Question question = db.Questions.Find(id);
 
+
             int numOfLikes = db.QuestionLikes.Where(l => l.UserId == UserManager.GetUserId(User)).Count();
             if (numOfLikes > 0)
             {
-                ViewData["upVoteValue"] = "Liked";
+                ViewData["upVoteValue"] = "Liked (" + db.QuestionLikes.Where(q => q.QuestionId == question.QuestionId).ToList().Count() + ")";
                 ViewData["upVoteClass"] = "btn-success";
             }
             else
             {
-                ViewData["upVoteValue"] = "Like";
+                ViewData["upVoteValue"] = "Like (" + db.QuestionLikes.Where(q => q.QuestionId == question.QuestionId).ToList().Count() + ")";
                 ViewData["upVoteClass"] = "btn-outline-success";
-
             }
 
             int numOfDislikes = db.QuestionDislikes.Where(l => l.UserId == UserManager.GetUserId(User)).Count();
             if (numOfDislikes > 0)
             {
-                ViewData["downVoteValue"] = "Disliked";
+                ViewData["downVoteValue"] = "Disliked (" + db.QuestionDislikes.Where(q => q.QuestionId == question.QuestionId).ToList().Count() + ")";
                 ViewData["downVoteClass"] = "btn-danger";
             }
             else
             {
-                ViewData["downVoteValue"] = "Dislike";
+                ViewData["downVoteValue"] = "Dislike (" + db.QuestionDislikes.Where(q => q.QuestionId == question.QuestionId).ToList().Count() + ")";
                 ViewData["downVoteClass"] = "btn-outline-danger";
             }
 
