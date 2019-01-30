@@ -69,7 +69,7 @@
 
             string upVoteValue = "Like (" + db.AnswerLikes.Where(a => a.AnswerId == item.Id).ToList().Count() + ")";
             string upVoteClass = "btn-outline-success";
-            int numOfLikes = db.AnswerLikes.Where(l => l.UserId == UserManager.GetUserId(User)).Count();
+            int numOfLikes = db.AnswerLikes.Where(l => l.UserId == UserManager.GetUserId(User) && l.AnswerId == item.Id).Count();
             if (numOfLikes > 0)
             {
                 upVoteValue = "Liked (" + db.AnswerLikes.Where(a => a.AnswerId == item.Id).ToList().Count() + ")";
@@ -78,7 +78,7 @@
 
             string downVoteValue = "Dislike (" + db.AnswerDislikes.Where(a => a.AnswerId == item.Id).ToList().Count() + ")";
             string downVoteClass = "btn-outline-danger";
-            int numOfDislikes = db.AnswerDislikes.Where(l => l.UserId == UserManager.GetUserId(User)).Count();
+            int numOfDislikes = db.AnswerDislikes.Where(l => l.UserId == UserManager.GetUserId(User) && l.AnswerId == item.Id).Count();
             if (numOfDislikes > 0)
             {
                 downVoteValue = "Disliked (" + db.AnswerDislikes.Where(a => a.AnswerId == item.Id).ToList().Count() + ")";

@@ -62,7 +62,7 @@ namespace MVCProj.Controllers
             Question question = db.Questions.Find(id);
 
 
-            int numOfLikes = db.QuestionLikes.Where(l => l.UserId == UserManager.GetUserId(User)).Count();
+            int numOfLikes = db.QuestionLikes.Where(l => l.UserId == UserManager.GetUserId(User) && l.QuestionId == question.QuestionId).Count();
             if (numOfLikes > 0)
             {
                 ViewData["upVoteValue"] = "Liked (" + db.QuestionLikes.Where(q => q.QuestionId == question.QuestionId).ToList().Count() + ")";
@@ -74,7 +74,7 @@ namespace MVCProj.Controllers
                 ViewData["upVoteClass"] = "btn-outline-success";
             }
 
-            int numOfDislikes = db.QuestionDislikes.Where(l => l.UserId == UserManager.GetUserId(User)).Count();
+            int numOfDislikes = db.QuestionDislikes.Where(l => l.UserId == UserManager.GetUserId(User) && l.QuestionId == question.QuestionId).Count();
             if (numOfDislikes > 0)
             {
                 ViewData["downVoteValue"] = "Disliked (" + db.QuestionDislikes.Where(q => q.QuestionId == question.QuestionId).ToList().Count() + ")";
@@ -112,13 +112,13 @@ namespace MVCProj.Controllers
         public IActionResult upVoteQuestion(QuestionLike ql)
         {
             if (ModelState.IsValid)
-            {
-                int numOfLikes = db.QuestionLikes.Where(l => l.UserId == UserManager.GetUserId(User)).Count();
+            { 
+                int numOfLikes = db.QuestionLikes.Where(l => l.UserId == UserManager.GetUserId(User) && l.QuestionId == ql.QuestionId).Count();
                 if (numOfLikes > 0)
                 {
                     User user = db.Users.Find(db.Questions.Find(ql.QuestionId).UserId);
                     user.Score--;
-                    db.QuestionLikes.Remove(db.QuestionLikes.Where(qls => qls.UserId == UserManager.GetUserId(User)).ToList()[0]);
+                    db.QuestionLikes.Remove(db.QuestionLikes.Where(qls => qls.UserId == UserManager.GetUserId(User) && qls.QuestionId == ql.QuestionId).ToList()[0]);
                     db.SaveChanges();
                 }
                 else
@@ -136,12 +136,12 @@ namespace MVCProj.Controllers
         {
             if (ModelState.IsValid)
             {
-                int numOfDislikes = db.QuestionDislikes.Where(l => l.UserId == UserManager.GetUserId(User)).Count();
+                int numOfDislikes = db.QuestionDislikes.Where(l => l.UserId == UserManager.GetUserId(User) && l.QuestionId == qdl.QuestionId).Count();
                 if (numOfDislikes > 0)
                 {
                     User user = db.Users.Find(db.Questions.Find(qdl.QuestionId).UserId);
                     user.Score++;
-                    db.QuestionDislikes.Remove(db.QuestionDislikes.Where(qdls => qdls.UserId == UserManager.GetUserId(User)).ToList()[0]);
+                    db.QuestionDislikes.Remove(db.QuestionDislikes.Where(qdls => qdls.UserId == UserManager.GetUserId(User) && qdls.QuestionId == qdl.QuestionId).ToList()[0]);
                     db.SaveChanges();
                 }
                 else
@@ -159,12 +159,12 @@ namespace MVCProj.Controllers
         {
             if (ModelState.IsValid)
             {
-                int numOfLikes = db.AnswerLikes.Where(l => l.UserId == UserManager.GetUserId(User)).Count();
+                int numOfLikes = db.AnswerLikes.Where(l => l.UserId == UserManager.GetUserId(User) && l.AnswerId == al.AnswerId).Count();
                 if (numOfLikes > 0)
                 {
                     User user = db.Users.Find(db.Answers.Find(al.AnswerId).UserId);
                     user.Score--;
-                    db.AnswerLikes.Remove(db.AnswerLikes.Where(als => als.UserId == UserManager.GetUserId(User)).ToList()[0]);
+                    db.AnswerLikes.Remove(db.AnswerLikes.Where(als => als.UserId == UserManager.GetUserId(User) && als.AnswerId == al.AnswerId).ToList()[0]);
                     db.SaveChanges();
                 }
                 else
@@ -175,19 +175,20 @@ namespace MVCProj.Controllers
                     db.SaveChanges();
                 }
             }
-            return RedirectToAction(nameof(Show), new { id = al.AnswerId });
+            int qid = db.Answers.Find(al.AnswerId).QuestionId;
+            return RedirectToAction(nameof(Show), new { id = qid });
         }
 
         public IActionResult downVoteAnswer(AnswerDislike adl)
         {
             if (ModelState.IsValid)
             {
-                int numOfDislikes = db.AnswerDislikes.Where(l => l.UserId == UserManager.GetUserId(User)).Count();
+                int numOfDislikes = db.AnswerDislikes.Where(l => l.UserId == UserManager.GetUserId(User) && l.AnswerId == adl.AnswerId).Count();
                 if (numOfDislikes > 0)
                 {
                     User user = db.Users.Find(db.Answers.Find(adl.AnswerId).UserId);
                     user.Score++;
-                    db.AnswerDislikes.Remove(db.AnswerDislikes.Where(adls => adls.UserId == UserManager.GetUserId(User)).ToList()[0]);
+                    db.AnswerDislikes.Remove(db.AnswerDislikes.Where(adls => adls.UserId == UserManager.GetUserId(User) && adls.AnswerId == adl.AnswerId).ToList()[0]);
                     db.SaveChanges();
                 }
                 else
@@ -198,7 +199,8 @@ namespace MVCProj.Controllers
                     db.SaveChanges();
                 }
             }
-            return RedirectToAction(nameof(Show), new { id = adl.AnswerId });
+            int qid = db.Answers.Find(adl.AnswerId).QuestionId;
+            return RedirectToAction(nameof(Show), new { id = qid });
         }
     }
 }
