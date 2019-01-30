@@ -58,11 +58,6 @@ namespace MVCProj.Controllers
             return View();
         }
 
-        //public IActionResult Login()
-        //{
-        //    return View();
-        //}
-
         [HttpGet]
         public IActionResult Login(string returnUrl = "")
         {
@@ -93,8 +88,7 @@ namespace MVCProj.Controllers
             ModelState.AddModelError("", "Invalid login attempt");
             return View(model);
         }
-
-        //[HttpPost]
+        
         public async Task<IActionResult> Logout()
         {
             await _signManager.SignOutAsync();

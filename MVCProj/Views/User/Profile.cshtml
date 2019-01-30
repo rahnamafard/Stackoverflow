@@ -36,9 +36,6 @@
                 <th>
                     Title
                 </th>
-                @*<th>
-                        @Html.DisplayNameFor(model => model.Content)
-                    </th>*@
                 <th></th>
             </tr>
         </thead>
@@ -49,13 +46,8 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Title)
                     </td>
-                    @*<td>
-                            @Html.DisplayFor(modelItem => item.Content)
-                        </td>*@
                     <td>
-                        @*<a asp-action="Edit" asp-route-id="@item.QuestionId">Edit</a> |*@
                         <a asp-controller="Question" asp-action="Show" asp-route-id="@item.QuestionId">View Question</a>
-                        @*<a asp-action="Delete" asp-route-id="@item.QuestionId">Delete</a>*@
                     </td>
                 </tr>
             }
@@ -71,9 +63,6 @@
                 <th>
                     Content
                 </th>
-                @*<th>
-                        @Html.DisplayNameFor(model => model.Content)
-                    </th>*@
                 <th></th>
             </tr>
         </thead>
@@ -84,13 +73,8 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Content)
                     </td>
-                    @*<td>
-                            @Html.DisplayFor(modelItem => item.Content)
-                        </td>*@
                     <td>
-                        @*<a asp-action="Edit" asp-route-id="@item.QuestionId">Edit</a> |*@
                         <a asp-controller="Question" asp-action="Show" asp-route-id="@item.QuestionId">View According Question</a>
-                        @*<a asp-action="Delete" asp-route-id="@item.QuestionId">Delete</a>*@
                     </td>
                 </tr>
             }
